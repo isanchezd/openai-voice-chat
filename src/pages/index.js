@@ -4,55 +4,6 @@ import {IconMessage, IconMicrophone} from "@/components/Icons";
 
 
 
-function MessagesList({messages}) {
-    return (
-        <div>
-            {messages.reverse().map((message, index) => <Message key={index} message={message}></Message>)}
-        </div>
-    )
-}
-
-function Message({message}) {
-    return (
-        <div className={`text-gray-100`}>
-            <article className='flex gap-4 p-6 max-w-3xl'>
-                <div className='min-h-[20px] flex flex-1 flex-col items-start gap-4 whitespace-pre-wrap'>
-                    <div className='prose-invert w-full break-words'>
-                        <p>{message}</p>
-                    </div>
-                </div>
-            </article>
-        </div>
-    )
-}
-
-
-async function getChatMessage(message) {
-    const requestConfig = {
-        method: 'Post',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({message})
-    }
-
-    try {
-        const response = await fetch('/api', requestConfig);
-
-        const data = await response.json();
-        const newMessage = data.text
-
-        if (response.status !== 200) {
-            throw data.error || new Error(`Request failed with status ${response.status}`);
-        }
-
-        return newMessage
-    } catch(error) {
-        console.error(error);
-        alert(error.message);
-    }
-}
-
 export default function Home() {
     const [text, setText] = useState('')
     const [messages, setMessages] = useState([])
@@ -102,15 +53,15 @@ export default function Home() {
             </Head>
 
             <main className={'w-full h-screen min-w-[300px] grid grid-cols-1 grid-rows-[100px_1fr_150px] bg-slate-700' }>
-                <section className={'p-4'}>
+                <header className={'p-4'}>
                     <h1 className={'text-2xl text-white'}>Davinci Voice Chat</h1>
-                </section>
+                </header>
                 <section className={'border-2 border-y-gray-900/50 border-x-transparent overflow-auto'}>
                     <MessagesList messages={messages}></MessagesList>
                 </section>
-                <section className={'sticky flex flex-col justify-center items-center'}>
+                <section className={'flex flex-col justify-center items-center sticky'}>
                     <div className={'relative flex flex-col flex-grow w-full px-4 py-3 text-white'}>
-                        <textarea className={'w-full h-[24px] resize-none bg-transparent m-0 border-0 outline-none'} name="" id="" value={text} onInput={onInputTextarea}></textarea>
+                        <textarea className={'w-full h-[45px] resize-none bg-transparent m-0 border border-b-white-100 border-t-transparent border-x-transparent overflow-auto outline-none'} name="" id="" value={text} onInput={onInputTextarea}></textarea>
                         <button className={'absolute p-1 rounded-md bottom-2.5 right-2.6'} onClick={onSendButtonClick}><IconMessage></IconMessage></button>
                         <button className={'absolute p-1 rounded-md bottom-2.5 right-2.5'} onClick={onSpeechButtonClick}><IconMicrophone></IconMicrophone></button>
                     </div>
@@ -120,4 +71,52 @@ export default function Home() {
 
         </>
     )
+}
+
+function MessagesList({messages}) {
+    return (
+        <div>
+            {messages.reverse().map((message, index) => <Message key={index} message={message}></Message>)}
+        </div>
+    )
+}
+
+function Message({message}) {
+    return (
+        <div className={`text-gray-100`}>
+            <article className='flex gap-4 p-6 max-w-3xl'>
+                <div className='min-h-[20px] flex flex-1 flex-col items-start gap-4 whitespace-pre-wrap'>
+                    <div className='prose-invert w-full break-words'>
+                        <p>{message}</p>
+                    </div>
+                </div>
+            </article>
+        </div>
+    )
+}
+
+async function getChatMessage(message) {
+    const requestConfig = {
+        method: 'Post',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({message})
+    }
+
+    try {
+        const response = await fetch('/api', requestConfig);
+
+        const data = await response.json();
+        const newMessage = data.text
+
+        if (response.status !== 200) {
+            throw data.error || new Error(`Request failed with status ${response.status}`);
+        }
+
+        return newMessage
+    } catch(error) {
+        console.error(error);
+        alert(error.message);
+    }
 }
