@@ -54,7 +54,7 @@ export default function Home() {
 
             <main className={'w-full h-screen min-w-[300px] grid grid-cols-1 grid-rows-[100px_1fr_150px] bg-slate-700' }>
                 <header className={'p-4'}>
-                    <h1 className={'text-2xl text-white'}>Davinci Voice Chat</h1>
+                    <h1 className={'text-2xl text-white'}>OpenAI Voice Chat</h1>
                 </header>
                 <section className={'border-2 border-y-gray-900/50 border-x-transparent overflow-auto'}>
                     <MessagesList messages={messages}></MessagesList>
