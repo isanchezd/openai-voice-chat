@@ -2,7 +2,7 @@
 
 ## Description
 
-This project is a POC to integrate the [davinci language model](https://platform.openai.com/docs/models/davinci) from OpenAI and a text-to-voice library for a conversational chat
+This project is a POC to integrate the [Chatgpt-3.5 language model](https://platform.openai.com/docs/models/gpt-3-5) from OpenAI and a text-to-voice library for a conversational chat
 
 The project is only for learning proposal and "play" with some technologies so if you interested fork the project and play :)
 
