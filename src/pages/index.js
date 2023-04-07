@@ -4,6 +4,8 @@ import {IconMessage, IconMicrophone} from "@/components/Icons";
 
 
 
+
+
 export default function Home() {
     const [text, setText] = useState('')
     const [messages, setMessages] = useState([])
@@ -28,7 +30,7 @@ export default function Home() {
     async function onSpeechButtonClick() {
         const spoken = (await import('../../node_modules/spoken/build/spoken')).default
 
-        const transcript  = await spoken.listen
+        const transcript = await spoken.listen()
 
         updateMessages(transcript)
         const message = await getChatMessage(transcript)
