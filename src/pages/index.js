@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import { useState } from 'react';
 import { IconMessage, IconMicrophone } from '@/components/Icons';
+import { Textarea, Heading, Flex, Box, Text, Button } from '@chakra-ui/react';
+
 
 export default function Home() {
   const [text, setText] = useState('');
@@ -9,7 +11,7 @@ export default function Home() {
   const onChangeMessage = (event) => {
     const newText = event.target.value;
     setText(newText);
-  }
+  };
 
   const onKeyDownMessage = async (event) => {
     const keyCode = event.keyCode;
@@ -17,24 +19,12 @@ export default function Home() {
     const ENTER_KEY = 13;
 
     if (keyCode === ENTER_KEY) {
+      setText('');
       updateMessages(newText);
       const message = await getChatMessage(newText);
       updateMessages(message);
-      setText('');
     }
-  }
-
-  const onSendButtonClick = async (event) => {
-    event.preventDefault();
-
-    if (text.length > 0) {
-      updateMessages(text);
-      const message = await getChatMessage(text);
-      updateMessages(message);
-    }
-
-    setText('');
-  }
+  };
 
   const onSpeechButtonClick = async () => {
     const spoken = (await import('../../node_modules/spoken/build/spoken'))
@@ -46,13 +36,13 @@ export default function Home() {
     const message = await getChatMessage(transcript);
     updateMessages(message);
     spoken.say(message);
-  }
+  };
 
   const updateMessages = (newMessage) => {
     setMessages((previousMessages) => {
       return [newMessage, ...previousMessages];
     });
-  }
+  };
 
   return (
     <>
@@ -63,51 +53,29 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <main
-        className={
-          'w-full h-screen min-w-[300px] grid grid-cols-1 grid-rows-[100px_1fr_150px] bg-slate-700'
-        }
-      >
-        <header className={'p-4'}>
-          <h1 className={'text-2xl text-white'}>OpenAI Voice Chat</h1>
-        </header>
-        <section
-          className={
-            'border-2 border-y-gray-900/50 border-x-transparent overflow-auto'
-          }
-        >
-          <MessagesList messages={messages}></MessagesList>
-        </section>
-        <section className={'flex flex-col justify-center items-center sticky'}>
-          <div
-            className={
-              'relative flex flex-col flex-grow w-full px-4 py-3 text-white'
-            }
-          >
-            <textarea
-              className={
-                'w-full h-[45px] resize-none bg-transparent m-0 border border-b-white-100 border-t-transparent border-x-transparent overflow-auto outline-none'
-              }
+      <main>
+        <Flex bg='gray.700' color='white' h='100vh' direction='column'>
+          <Box w='100%' p={4} borderBottomColor='white' borderBottomWidth="1px">
+            <Heading>OpenAI Voice Chat</Heading>
+          </Box>
+          <Box flexGrow={2}>
+            <MessagesList messages={messages}></MessagesList>
+          </Box>
+          <Box>
+            <Textarea
               name='message'
               id='message'
               value={text}
               onKeyDown={onKeyDownMessage}
               onChange={onChangeMessage}
-            ></textarea>
-            <button
-              className={'absolute p-1 rounded-md bottom-2.5 right-2.6'}
-              onClick={onSendButtonClick}
-            >
-              <IconMessage></IconMessage>
-            </button>
-            <button
-              className={'absolute p-1 rounded-md bottom-2.5 right-2.5'}
+            ></Textarea>
+            <Button bg='grey.500'
               onClick={onSpeechButtonClick}
             >
               <IconMicrophone></IconMicrophone>
-            </button>
-          </div>
-        </section>
+            </Button>
+          </Box>
+        </Flex>
       </main>
     </>
   );
@@ -115,25 +83,19 @@ export default function Home() {
 
 function MessagesList({ messages }) {
   return (
-    <div>
+    <Box padding={'4'}>
       {messages.reverse().map((message, index) => (
         <Message key={index} message={message}></Message>
       ))}
-    </div>
+    </Box>
   );
 }
 
 function Message({ message }) {
   return (
-    <div className={`text-gray-100`}>
-      <article className='flex gap-4 p-6 max-w-3xl'>
-        <div className='min-h-[20px] flex flex-1 flex-col items-start gap-4 whitespace-pre-wrap'>
-          <div className='prose-invert w-full break-words'>
-            <p>{message}</p>
-          </div>
-        </div>
-      </article>
-    </div>
+    <Box marginTop={4}>
+      <Text>{message}</Text>
+    </Box>
   );
 }
 
