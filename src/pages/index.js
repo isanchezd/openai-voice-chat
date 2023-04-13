@@ -1,10 +1,12 @@
 import Head from 'next/head';
 import { useState } from 'react';
-import { IconMessage, IconMicrophone } from '@/components/Icons';
-import { Textarea, Heading, Flex, Box, Text, Button } from '@chakra-ui/react';
+import { Textarea, Heading, Flex, Box, Button } from '@chakra-ui/react';
+import { IconMicrophone } from '@/components/Icons';
+import { MessagesList } from '@/components/MessageList';
 
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(false)
   const [text, setText] = useState('');
   const [messages, setMessages] = useState([]);
 
@@ -20,9 +22,11 @@ export default function Home() {
 
     if (keyCode === ENTER_KEY) {
       setText('');
+      setIsLoading(true)
       updateMessages(newText);
       const message = await getChatMessage(newText);
       updateMessages(message);
+      setIsLoading(false);
     }
   };
 
@@ -30,12 +34,14 @@ export default function Home() {
     const spoken = (await import('../../node_modules/spoken/build/spoken'))
       .default;
 
+    setIsLoading(true)
     const transcript = await spoken.listen();
 
     updateMessages(transcript);
     const message = await getChatMessage(transcript);
     updateMessages(message);
     spoken.say(message);
+    setIsLoading(false)
   };
 
   const updateMessages = (newMessage) => {
@@ -54,48 +60,42 @@ export default function Home() {
       </Head>
 
       <main>
-        <Flex bg='gray.700' color='white' h='100vh' direction='column'>
-          <Box w='100%' p={4} borderBottomColor='white' borderBottomWidth="1px">
+        <Flex
+          bg='gray.700'
+          color='white'
+          h='100vh'
+          direction='column'
+          marginBottom='125px'
+        >
+          <Box w='100%' p={4} borderBottomColor='white' borderBottomWidth='1px'>
             <Heading>OpenAI Voice Chat</Heading>
           </Box>
           <Box flexGrow={2}>
             <MessagesList messages={messages}></MessagesList>
           </Box>
-          <Box>
-            <Textarea
-              name='message'
-              id='message'
-              value={text}
-              onKeyDown={onKeyDownMessage}
-              onChange={onChangeMessage}
-            ></Textarea>
-            <Button bg='grey.500'
-              onClick={onSpeechButtonClick}
-            >
-              <IconMicrophone></IconMicrophone>
-            </Button>
+          <Box padding='3'>
+            <Flex gap='2' alignItems='center'>
+              <Textarea
+                name='message'
+                id='message'
+                value={text}
+                onKeyDown={onKeyDownMessage}
+                onChange={onChangeMessage}
+                disabled={isLoading}
+              ></Textarea>
+              <Button
+                bg='red.500'
+                variant='solid'
+                onClick={onSpeechButtonClick}
+                disabled={isLoading}
+              >
+                <IconMicrophone></IconMicrophone>
+              </Button>
+            </Flex>
           </Box>
         </Flex>
       </main>
     </>
-  );
-}
-
-function MessagesList({ messages }) {
-  return (
-    <Box padding={'4'}>
-      {messages.reverse().map((message, index) => (
-        <Message key={index} message={message}></Message>
-      ))}
-    </Box>
-  );
-}
-
-function Message({ message }) {
-  return (
-    <Box marginTop={4}>
-      <Text>{message}</Text>
-    </Box>
   );
 }
 
